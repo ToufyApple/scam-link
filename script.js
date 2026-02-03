@@ -29,23 +29,48 @@ startMusicBtn.addEventListener("click", async () => {
   trackA.volume = 0;
   await trackA.play();
   fade(trackA, 0, 1);
+
   startMusicBtn.textContent = "🎶 Playing";
   startMusicBtn.disabled = true;
 });
 
-/* NO BUTTON DODGE */
+/* ---- NO BUTTON DODGE (SMALLER MOVEMENT) ----
+   Keep it close to its original spot so it looks playful, not chaotic.
+*/
 function dodgeNo(){
   const wrap = document.querySelector(".buttons-wrap");
-  const r = wrap.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
+
+  // Get current position relative to wrapper
+  const noRect = noBtn.getBoundingClientRect();
+  const currentX = noRect.left - wrapRect.left;
+  const currentY = noRect.top - wrapRect.top;
+
+  // Convert to absolute inside wrapper ONCE
+  if (getComputedStyle(noBtn).position !== "absolute") {
+    noBtn.style.position = "absolute";
+    noBtn.style.left = `${currentX}px`;
+    noBtn.style.top  = `${currentY}px`;
+  }
+
+  // Move by a small random delta (bounded)
+  const dx = (Math.random() * 140) - 70;  // -70..+70 px
+  const dy = (Math.random() * 80)  - 40;  // -40..+40 px
+
   const bw = noBtn.offsetWidth;
   const bh = noBtn.offsetHeight;
 
-  noBtn.style.position = "absolute";
-  noBtn.style.left = Math.random() * (r.width - bw) + "px";
-  noBtn.style.top  = Math.random() * (r.height - bh) + "px";
+  // Clamp inside wrapper with padding
+  const pad = 6;
+  const newX = Math.min(Math.max(parseFloat(noBtn.style.left) + dx, pad), wrapRect.width - bw - pad);
+  const newY = Math.min(Math.max(parseFloat(noBtn.style.top)  + dy, pad), wrapRect.height - bh - pad);
 
-  yesSize *= 1.15;
-  yesBtn.style.fontSize = yesSize + "px";
+  noBtn.style.left = `${newX}px`;
+  noBtn.style.top  = `${newY}px`;
+
+  // YES grows a bit (but not huge)
+  yesSize = Math.min(44, yesSize * 1.08);
+  yesBtn.style.fontSize = `${Math.round(yesSize)}px`;
 }
 
 noBtn.addEventListener("mouseenter", dodgeNo);
