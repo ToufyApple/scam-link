@@ -1,50 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>For Naz 🌻</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <!-- Proposal Screen -->
-  <main id="proposalScreen" class="page">
-    <section class="card" role="dialog" aria-label="Valentine proposal card">
-      <div class="accent"></div>
 
-      <h1 class="title">Will you be my Valentine, <span class="name">Naz</span>?</h1>
-      <p class="subtitle">You’re my sunflower, because you brighten everything 💜</p>
+<div id="card">
+  <h1>Will you be my Valentine, <span>Naz</span>?</h1>
+  <p>You are my sunflower 🌻</p>
 
-      <div class="divider"></div>
+  <div id="buttons">
+    <button id="yes">YES</button>
+    <button id="no">NO</button>
+  </div>
 
-      <div id="buttonArea" class="button-area">
-        <button id="yesBtn" class="btn btn-yes" type="button">YES 🌻</button>
-        <button id="noBtn" class="btn btn-no" type="button">NO</button>
-      </div>
+  <small>(Hint: YES unlocks a surprise 🌻)</small>
+</div>
 
-      <p class="footer">
-        You can try and say NO. Butttttt there is a surprise for you if you click YES 🌻
-      </p>
-    </section>
-  </main>
+<canvas id="sunflower"></canvas>
 
-  <!-- Animation Screen -->
-  <main id="animationScreen" class="page hidden">
-    <canvas id="sunflowerCanvas" aria-label="Sunflower animation"></canvas>
-
-    <div class="overlay">
-      <div class="overlay-card">
-        <h2 class="overlay-title">Naz said YES 🌻💜</h2>
-        <p class="overlay-text">
-          Naz, you make my world brighter every day.<br />
-          <span class="muted">Now I’ve got something special for you… 🌻</span>
-        </p>
-        <button id="replayBtn" class="btn btn-yes" type="button">Replay 🌻</button>
-      </div>
-    </div>
-  </main>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
