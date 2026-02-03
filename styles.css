@@ -1,58 +1,122 @@
-body {
+:root{
+  --bg: #f7f0ff;
+  --card: #ffffff;
+  --shadow: rgba(0,0,0,0.15);
+  --purple: #6d3cff;
+  --yes: #ffd84d;
+  --no: #ededed;
+}
+
+*{ box-sizing:border-box; }
+
+body{
   margin: 0;
   height: 100vh;
-  background: #f7f0ff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
-#card {
-  background: white;
-  padding: 30px;
-  border-radius: 16px;
+/* Card */
+#card{
+  width: min(860px, 92vw);
+  background: var(--card);
+  padding: 48px 28px;
+  border-radius: 22px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  box-shadow: 0 24px 60px var(--shadow);
   z-index: 2;
 }
 
-h1 span {
-  color: #6d3cff;
+h1{
+  margin: 0 0 18px;
+  font-size: clamp(30px, 4.2vw, 56px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
-#buttons {
+.name{
+  color: var(--purple);
+}
+
+.subtitle{
+  margin: 0 0 34px;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 600;
+}
+
+#buttons{
   position: relative;
-  height: 120px;
-  margin-top: 20px;
+  height: 170px;
+  width: min(520px, 90vw);
+  margin: 0 auto 18px;
 }
 
-button {
-  padding: 14px 28px;
+button{
+  padding: 18px 40px;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
+  border-radius: 18px;
+  font-size: 24px;
+  font-weight: 900;
   cursor: pointer;
   position: absolute;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease;
 }
 
-#yes {
-  background: #ffd84d;
-  left: 40px;
+button:active{
+  transform: scale(0.98);
 }
 
-#no {
-  background: #eee;
-  left: 160px;
+#yes{
+  background: var(--yes);
+  left: 70px;
+  top: 24px;
 }
 
-canvas {
+#no{
+  background: var(--no);
+  left: 300px;
+  top: 96px;
+}
+
+.hint{
+  display: block;
+  font-size: clamp(12px, 1.7vw, 18px);
+  font-weight: 600;
+  opacity: 0.75;
+  margin-top: 8px;
+}
+
+/* Canvas */
+canvas{
   display: none;
   position: fixed;
   inset: 0;
-  background: black;
+  background: #000;
   width: 100vw;
   height: 100vh;
 }
+
+/* Music toggle button (on animation screen) */
+.music-toggle{
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 5;
+  background: rgba(255,255,255,0.14);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.22);
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.hidden{ display:none; }
