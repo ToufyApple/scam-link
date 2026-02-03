@@ -14,17 +14,13 @@ let musicOn = true;
 // NO button runs away + YES grows
 // -----------------------------
 function dodgeNo() {
-  // Keep movement inside the #buttons area
   const area = document.getElementById("buttons").getBoundingClientRect();
 
   const maxLeft = Math.max(0, area.width - no.offsetWidth);
   const maxTop  = Math.max(0, area.height - no.offsetHeight);
 
-  const left = Math.random() * maxLeft;
-  const top = Math.random() * maxTop;
-
-  no.style.left = `${left}px`;
-  no.style.top  = `${top}px`;
+  no.style.left = `${Math.random() * maxLeft}px`;
+  no.style.top  = `${Math.random() * maxTop}px`;
 
   yesSize *= 1.18;
   yes.style.fontSize = `${Math.round(yesSize)}px`;
@@ -40,18 +36,11 @@ no.addEventListener("touchstart", (e) => {
 // YES click → start music + animation
 // -----------------------------
 yes.addEventListener("click", async () => {
-  // Hide card, show canvas
   card.style.display = "none";
   canvas.style.display = "block";
   musicToggle.classList.remove("hidden");
 
-  // Start music (iPhone requires user gesture; this click counts)
-  try {
-    if (musicOn) await bgMusic.play();
-  } catch (err) {
-    // If it fails, user can still toggle manually
-    console.log("Music play blocked:", err);
-  }
+  try { if (musicOn) await bgMusic.play(); } catch(e) {}
 
   startSunflower();
 });
@@ -69,148 +58,181 @@ musicToggle.addEventListener("click", async () => {
 });
 
 // -----------------------------
-// Sunflower animation (fast + looks like sunflower + Naz fades in after)
+// SUNFLOWER that looks like a sunflower
 // -----------------------------
 function startSunflower() {
   resize();
   window.addEventListener("resize", resize);
 
-  const W = () => canvas.width;
-  const H = () => canvas.height;
+  const dpr = window.devicePixelRatio || 1;
+
+  const W = () => canvas.width / dpr;
+  const H = () => canvas.height / dpr;
   const cx = () => W() / 2;
   const cy = () => H() / 2;
-
   const base = () => Math.min(W(), H());
-  const petalOuter = () => base() * 0.34;
-  const seedRadiusMax = () => base() * 0.14;
 
-  const TOTAL_PETALS = 48;
-  const PETALS_PER_FRAME = 10;     // faster petals
+  // Sizes
+  const petalCount = 28;                  // fewer = clearer petals
+  const petalLen = () => base() * 0.28;   // petal length
+  const petalWid = () => base() * 0.12;   // petal width
+  const petalRing = () => base() * 0.18;  // where petals start from
 
-  const TOTAL_SEEDS = 900;
-  const SEEDS_PER_FRAME = 70;      // faster seeds
+  const diskR = () => base() * 0.17;      // seed head radius (big)
+  const seedsTotal = 1100;                // dense center
+  const seedsPerFrame = 90;               // fast
 
-  const golden = 137.508 * Math.PI / 180;
-
-  let petalsDrawn = 0;
+  // Animation states
+  let petalsProgress = 0;                 // 0..1
   let seeds = 0;
 
   let nazAlpha = 0;
-  let done = false;
+  let finished = false;
 
-  function drawBackground() {
+  const golden = 137.508 * Math.PI / 180;
+
+  function bg() {
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, W(), H());
+    ctx.restore();
   }
 
-  function drawPetals(count) {
-    for (let p = 0; p < count; p++) {
-      const i = petalsDrawn + p;
-      if (i >= TOTAL_PETALS) break;
+  function drawPetal(angle, t) {
+    // t is 0..1 for "grow in"
+    const len = petalLen() * t;
+    const wid = petalWid() * (0.65 + 0.35 * t);
 
-      const angle = i * (Math.PI * 2 / TOTAL_PETALS);
-      const r = petalOuter();
-      const w = base() * 0.065;
-      const h = base() * 0.22;
-
-      ctx.save();
-      ctx.translate(cx(), cy());
-      ctx.rotate(angle);
-
-      const grad = ctx.createLinearGradient(0, -h, 0, 0);
-      grad.addColorStop(0, "#FFD84D");
-      grad.addColorStop(0.55, "#FFA216");
-      grad.addColorStop(1, "#F4A300");
-      ctx.fillStyle = grad;
-
-      ctx.beginPath();
-      ctx.moveTo(0, -r);
-      ctx.bezierCurveTo(w, -r + h * 0.35, w * 0.55, -r + h, 0, -r + h);
-      ctx.bezierCurveTo(-w * 0.55, -r + h, -w, -r + h * 0.35, 0, -r);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-    }
-    petalsDrawn = Math.min(TOTAL_PETALS, petalsDrawn + count);
-  }
-
-  function drawCenterDisk() {
     ctx.save();
     ctx.translate(cx(), cy());
+    ctx.rotate(angle);
 
-    const rad = seedRadiusMax() * 1.05;
-    const grad = ctx.createRadialGradient(0, 0, rad * 0.15, 0, 0, rad);
-    grad.addColorStop(0, "#3B1C0E");
-    grad.addColorStop(0.6, "#2A120A");
-    grad.addColorStop(1, "#120804");
-
+    // petal gradient
+    const grad = ctx.createLinearGradient(0, -petalRing(), 0, -(petalRing() + len));
+    grad.addColorStop(0, "#FFD84D");
+    grad.addColorStop(0.5, "#FFA216");
+    grad.addColorStop(1, "#FF8C00");
     ctx.fillStyle = grad;
+
+    // teardrop petal
+    const y0 = -petalRing();
+    const y1 = -(petalRing() + len);
+
     ctx.beginPath();
-    ctx.arc(0, 0, rad, 0, Math.PI * 2);
+    ctx.moveTo(0, y1); // tip
+    ctx.bezierCurveTo(wid * 0.9, y1 + len * 0.35, wid, y0 + len * 0.15, 0, y0);
+    ctx.bezierCurveTo(-wid, y0 + len * 0.15, -wid * 0.9, y1 + len * 0.35, 0, y1);
+    ctx.closePath();
     ctx.fill();
+
+    // subtle outline
+    ctx.globalAlpha = 0.15;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawPetals(t) {
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Draw back petals first (slightly darker), then front petals for depth
+    for (let i = 0; i < petalCount; i++) {
+      const angle = i * (Math.PI * 2 / petalCount);
+
+      // stagger growth so it feels animated
+      const local = Math.max(0, Math.min(1, (t * 1.25) - i / petalCount));
+      drawPetal(angle, local);
+    }
+
+    ctx.restore();
+  }
+
+  function drawDisk() {
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const r = diskR();
+    const g = ctx.createRadialGradient(cx(), cy(), r * 0.15, cx(), cy(), r);
+    g.addColorStop(0, "#4A210F");
+    g.addColorStop(0.6, "#2B1209");
+    g.addColorStop(1, "#130806");
+
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx(), cy(), r, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.restore();
   }
 
   function drawSeeds(count) {
     ctx.save();
-    ctx.translate(cx(), cy());
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     for (let i = 0; i < count; i++) {
       const k = seeds + i;
-      if (k >= TOTAL_SEEDS) break;
+      if (k >= seedsTotal) break;
 
-      const t = k * golden;
-      const r = Math.sqrt(k / TOTAL_SEEDS) * seedRadiusMax();
-      const x = r * Math.cos(t);
-      const y = r * Math.sin(t);
+      // spiral position inside disk
+      const radius = Math.sqrt(k / seedsTotal) * (diskR() * 0.92);
+      const theta = k * golden;
 
-      const shade = 90 + (k % 35);
-      ctx.fillStyle = `rgb(${shade}, 45, 15)`;
+      const x = cx() + radius * Math.cos(theta);
+      const y = cy() + radius * Math.sin(theta);
+
+      // seed shading variation
+      const tone = 120 + (k % 40);
+      ctx.fillStyle = `rgb(${tone}, 70, 35)`;
 
       ctx.beginPath();
       ctx.arc(x, y, 2.4, 0, Math.PI * 2);
       ctx.fill();
     }
 
+    seeds = Math.min(seedsTotal, seeds + count);
     ctx.restore();
-    seeds = Math.min(TOTAL_SEEDS, seeds + count);
   }
 
-  function drawNaz() {
-    if (nazAlpha <= 0) return;
+  function drawNaz(alpha) {
+    if (alpha <= 0) return;
 
     ctx.save();
-    ctx.globalAlpha = nazAlpha;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = alpha;
+
     ctx.fillStyle = "#000";
     ctx.font = "900 72px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Naz", cx(), cy());
+
     ctx.restore();
   }
 
   function step() {
-    drawBackground();
+    bg();
 
-    drawPetals(PETALS_PER_FRAME);
-    drawCenterDisk();
+    // petals grow in quickly
+    petalsProgress = Math.min(1, petalsProgress + 0.06);
+    drawPetals(petalsProgress);
 
-    if (petalsDrawn > TOTAL_PETALS * 0.25) {
-      drawSeeds(SEEDS_PER_FRAME);
-    }
+    // disk always visible once petals start
+    if (petalsProgress > 0.25) drawDisk();
 
-    if (petalsDrawn >= TOTAL_PETALS && seeds >= TOTAL_SEEDS) {
-      done = true;
-    }
+    // seeds start when petals are mostly in
+    if (petalsProgress > 0.55) drawSeeds(seedsPerFrame);
 
-    if (done) {
-      nazAlpha = Math.min(1, nazAlpha + 0.05); // fade speed
-    }
+    if (petalsProgress >= 1 && seeds >= seedsTotal) finished = true;
 
-    drawNaz();
+    if (finished) nazAlpha = Math.min(1, nazAlpha + 0.05);
 
-    if (done && nazAlpha >= 1) return;
+    drawNaz(nazAlpha);
+
+    if (finished && nazAlpha >= 1) return;
     requestAnimationFrame(step);
   }
 
@@ -221,5 +243,4 @@ function resize() {
   const dpr = window.devicePixelRatio || 1;
   canvas.width = Math.floor(window.innerWidth * dpr);
   canvas.height = Math.floor(window.innerHeight * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
