@@ -1,122 +1,132 @@
 :root{
-  --bg: #f7f0ff;
-  --card: #ffffff;
-  --shadow: rgba(0,0,0,0.15);
-  --purple: #6d3cff;
-  --yes: #ffd84d;
-  --no: #ededed;
+  --bg:#f7f0ff;
+  --card:#ffffff;
+  --purple:#6d3cff;
+  --yes:#ffd84d;
+  --no:#ededed;
 }
 
 *{ box-sizing:border-box; }
 
 body{
-  margin: 0;
-  height: 100vh;
-  background: var(--bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  margin:0;
+  height:100vh;
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
 }
 
 /* Card */
 #card{
-  width: min(860px, 92vw);
-  background: var(--card);
-  padding: 48px 28px;
-  border-radius: 22px;
-  text-align: center;
-  box-shadow: 0 24px 60px var(--shadow);
-  z-index: 2;
+  width:min(860px,92vw);
+  background:var(--card);
+  padding:48px 28px;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.15);
+  z-index:2;
 }
 
 h1{
-  margin: 0 0 18px;
-  font-size: clamp(30px, 4.2vw, 56px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  margin:0 0 18px;
+  font-size:clamp(30px,4.2vw,56px);
+  font-weight:900;
 }
 
-.name{
-  color: var(--purple);
-}
+.name{ color:var(--purple); }
 
 .subtitle{
-  margin: 0 0 34px;
-  font-size: clamp(16px, 2vw, 22px);
-  font-weight: 600;
+  margin:0 0 18px;
+  font-size:clamp(16px,2vw,22px);
+  font-weight:600;
 }
 
 #buttons{
-  position: relative;
-  height: 170px;
-  width: min(520px, 90vw);
-  margin: 0 auto 18px;
+  position:relative;
+  height:170px;
+  width:min(520px,90vw);
+  margin:18px auto 18px;
 }
 
 button{
-  padding: 18px 40px;
-  border: none;
-  border-radius: 18px;
-  font-size: 24px;
-  font-weight: 900;
-  cursor: pointer;
-  position: absolute;
-  user-select: none;
+  padding:18px 40px;
+  border:none;
+  border-radius:18px;
+  font-size:24px;
+  font-weight:900;
+  cursor:pointer;
+  position:absolute;
+  user-select:none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.15s ease;
-}
-
-button:active{
-  transform: scale(0.98);
 }
 
 #yes{
-  background: var(--yes);
-  left: 70px;
-  top: 24px;
+  background:var(--yes);
+  left:70px;
+  top:24px;
 }
 
 #no{
-  background: var(--no);
-  left: 300px;
-  top: 96px;
+  background:var(--no);
+  left:300px;
+  top:96px;
 }
 
 .hint{
-  display: block;
-  font-size: clamp(12px, 1.7vw, 18px);
-  font-weight: 600;
-  opacity: 0.75;
-  margin-top: 8px;
+  display:block;
+  font-size:clamp(12px,1.7vw,18px);
+  opacity:.75;
+}
+
+/* Start music button */
+.start-music{
+  position: static;
+  display: inline-block;
+  margin: 6px auto 6px;
+  background: rgba(109,60,255,0.10);
+  color: #2a1f3d;
+  border: 1px solid rgba(109,60,255,0.22);
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.music-note{
+  display:block;
+  opacity:0.55;
+  font-size:12px;
+  margin-bottom: 8px;
 }
 
 /* Canvas */
 canvas{
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: #000;
-  width: 100vw;
-  height: 100vh;
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000;
+  width:100vw;
+  height:100vh;
 }
 
-/* Music toggle button (on animation screen) */
+/* Music toggle */
 .music-toggle{
-  position: fixed;
-  right: 16px;
-  top: 16px;
-  z-index: 5;
-  background: rgba(255,255,255,0.14);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.22);
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 800;
-  backdrop-filter: blur(10px);
-  cursor: pointer;
+  position:fixed;
+  top:16px;
+  right:16px;
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:800;
+  backdrop-filter:blur(10px);
+  cursor:pointer;
+  z-index:5;
 }
 
 .hidden{ display:none; }
