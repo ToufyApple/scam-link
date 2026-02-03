@@ -8,13 +8,16 @@
 </head>
 <body>
 
-  <!-- Proposal Card -->
   <div id="card">
     <h1>Will you be my Valentine, <span class="name">Naz</span>?</h1>
 
     <p class="subtitle">
       You are my sunflower, because you brighten my everyday 🌻
     </p>
+
+    <!-- Start music (required for iPhone). Once tapped, Kalamantina plays. -->
+    <button id="startMusic" class="start-music">▶️ Start the vibe</button>
+    <small class="music-note">Tap once to enable music 💜</small>
 
     <div id="buttons">
       <button id="yes">YES</button>
@@ -26,18 +29,19 @@
     </small>
   </div>
 
-  <!-- Fullscreen Animation Canvas -->
   <canvas id="sunflower"></canvas>
 
-  <!-- Background music (starts after YES click) -->
-  <audio id="bgMusic" preload="auto" loop>
+  <!-- Track A: Kalamantina -->
+  <audio id="trackA" preload="auto" loop>
     <source src="kalamantina.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Music toggle (appears on animation screen) -->
-  <button id="musicToggle" class="music-toggle hidden" type="button" aria-label="Toggle music">
-    🔊 Music
-  </button>
+  <!-- Track B: Yama -->
+  <audio id="trackB" preload="auto" loop>
+    <source src="yama.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="musicToggle" class="music-toggle hidden">🔊 Music</button>
 
   <script src="script.js"></script>
 </body>
