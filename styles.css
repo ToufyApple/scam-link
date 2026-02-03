@@ -83,8 +83,8 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:14px;
-  margin:10px 0;
+  gap:42px;          /* ⬅️ MORE SPACE BETWEEN YES & NO */
+  margin:14px 0;
   height:96px;
 }
 
@@ -124,7 +124,7 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:14px;
+  gap:18px;
   padding:18px;
 }
 
@@ -134,27 +134,19 @@ body{
   text-align:center;
 }
 
-/* GIF GRID */
-.gif-grid{
-  display:flex;
-  gap:14px;
-  flex-wrap:wrap;
-  justify-content:center;
+/* GIF GRID — 2x2 */
+.yes-grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:16px;
+  justify-items:center;
 }
 
-.gif-grid img{
+.yes-grid img{
   width:140px;
   height:140px;
   object-fit:contain;
   border-radius:16px;
-}
-
-/* SUNFLOWER */
-.sunflower-final{
-  margin-top:16px;
-  width:140px;
-  height:140px;
-  object-fit:contain;
 }
 
 /* UTIL */
