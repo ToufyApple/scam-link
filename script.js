@@ -1,65 +1,78 @@
-const yesBtn = document.getElementById("yesBtn");
-const noBtn  = document.getElementById("noBtn");
-const btnRow = document.getElementById("btnRow");
-
-let yesScale = 1;
-let noScale = 1;
-
-function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-function moveNoButton(){
-  const bounds = btnRow.getBoundingClientRect();
-
-  // keep NO inside the button area (app-like)
-  const padding = 10;
-  const w = noBtn.offsetWidth;
-  const h = noBtn.offsetHeight;
-
-  const maxX = bounds.width  - w - padding;
-  const maxY = bounds.height - h - padding;
-
-  const x = Math.random() * maxX + padding;
-  const y = Math.random() * maxY + padding;
-
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top  = `${y}px`;
-  noBtn.style.transform = `translate(0, 0) scale(${noScale})`;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-function punishNo(){
-  // YES gets bigger (like Tkinter version)
-  yesScale = clamp(yesScale * 1.18, 1, 3.2);
-  yesBtn.style.transform = `scale(${yesScale})`;
-
-  // NO gets smaller + runs away
-  noScale = clamp(noScale * 0.92, 0.55, 1);
-  moveNoButton();
+body {
+  background: radial-gradient(circle, #0b0b0b, #000);
+  color: white;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-// Make the NO button start in a nice place (not random)
-(function initNo(){
-  // place near center-right like your screenshot
-  const bounds = btnRow.getBoundingClientRect();
-  noBtn.style.left = `${bounds.width * 0.62}px`;
-  noBtn.style.top  = `${bounds.height * 0.50}px`;
-  noBtn.style.transform = `translate(0,0) scale(${noScale})`;
-})();
+.container {
+  text-align: center;
+  max-width: 900px;
+  padding: 20px;
+}
 
-// Desktop hover = run away
-noBtn.addEventListener("mouseenter", punishNo);
+.top-text {
+  color: #f7c948; /* sunflower */
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
 
-// Mobile tap = run away
-noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  punishNo();
-}, { passive: false });
+h1 {
+  font-size: clamp(32px, 6vw, 64px);
+  line-height: 1.2;
+  margin-bottom: 40px;
+}
 
-// If she somehow clicks NO (rare), still punish
-noBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  punishNo();
-});
+.highlight {
+  color: #b983ff; /* lilac */
+}
 
-yesBtn.addEventListener("click", () => {
-  window.location.href = "sunflower.html";
-});
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+button {
+  border: none;
+  padding: 18px 36px;
+  font-size: 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#yesBtn {
+  background: #ff4d6d;
+  color: white;
+}
+
+#noBtn {
+  background: #555;
+  color: white;
+  position: relative;
+}
+
+.subtext {
+  color: #ccc;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.always {
+  margin-top: 25px;
+  color: #f7c948;
+  font-size: 20px;
+  font-weight: 600;
+}
