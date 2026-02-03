@@ -8,14 +8,15 @@ const trackA = document.getElementById("trackA"); // kalamantina
 const trackB = document.getElementById("trackB"); // yama
 
 let audioEnabled = false;
-let yesSize = 24;
+let yesScale = 1;
+let noScale  = 1;
 
-// ---------- Fade helpers (awaitable, no overlap bugs) ----------
-function fadeTo(audio, target, ms = 1200) {
+/* ================= AUDIO HELPERS ================= */
+function fadeTo(audio, target, ms = 900) {
   const start = audio.volume;
   const t0 = performance.now();
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     function tick(now) {
       const p = Math.min(1, (now - t0) / ms);
       audio.volume = start + (target - start) * p;
@@ -32,26 +33,22 @@ async function stopHard(audio) {
   audio.volume = 0;
 }
 
-// ---------- Start Kalamantina on front page ----------
+/* ================= START MUSIC ================= */
 startMusicBtn.addEventListener("click", async () => {
-  try {
-    audioEnabled = true;
+  audioEnabled = true;
 
-    await stopHard(trackB);
+  await stopHard(trackB);
 
-    trackA.currentTime = 0;
-    trackA.volume = 0;
-    await trackA.play();
-    await fadeTo(trackA, 1, 1200);
+  trackA.currentTime = 0;
+  trackA.volume = 0;
+  await trackA.play();
+  await fadeTo(trackA, 1);
 
-    startMusicBtn.textContent = "🎶 Playing";
-    startMusicBtn.disabled = true;
-  } catch (e) {
-    console.log("Audio blocked:", e);
-  }
+  startMusicBtn.textContent = "🎶 Playing";
+  startMusicBtn.disabled = true;
 });
 
-// ---------- NO button dodge (stays inside wrapper) ----------
+/* ================= NO BUTTON BEHAVIOUR ================= */
 function makeNoAbsoluteOnce() {
   if (getComputedStyle(noBtn).position === "absolute") return;
 
@@ -64,7 +61,7 @@ function makeNoAbsoluteOnce() {
   noBtn.style.top  = `${noRect.top  - wrapRect.top}px`;
 }
 
-function dodgeNo(){
+function dodgeNo() {
   const wrap = document.querySelector(".buttons-wrap");
   const wrapRect = wrap.getBoundingClientRect();
 
@@ -73,9 +70,9 @@ function dodgeNo(){
   const bw = noBtn.offsetWidth;
   const bh = noBtn.offsetHeight;
 
-  // Small playful movement, clamped inside wrapper
-  const dx = (Math.random() * 140) - 70; // -70..+70
-  const dy = (Math.random() * 60)  - 30; // -30..+30
+  // Movement (small + controlled)
+  const dx = (Math.random() * 120) - 60; // -60 → +60
+  const dy = (Math.random() * 50)  - 25; // -25 → +25
 
   const pad = 6;
   const curX = parseFloat(noBtn.style.left);
@@ -87,8 +84,13 @@ function dodgeNo(){
   noBtn.style.left = `${newX}px`;
   noBtn.style.top  = `${newY}px`;
 
-  yesSize = Math.min(44, yesSize * 1.08);
-  yesBtn.style.fontSize = `${Math.round(yesSize)}px`;
+  /* 🔽 NO gets smaller */
+  noScale = Math.max(0.45, noScale * 0.88);
+  noBtn.style.transform = `scale(${noScale})`;
+
+  /* 🔼 YES gets bigger */
+  yesScale = Math.min(1.8, yesScale * 1.12);
+  yesBtn.style.transform = `scale(${yesScale})`;
 }
 
 noBtn.addEventListener("mouseenter", dodgeNo);
@@ -97,32 +99,27 @@ noBtn.addEventListener("touchstart", (e) => {
   dodgeNo();
 }, { passive:false });
 
-// ---------- YES click: STOP A then START B (no overlap) ----------
+/* ================= YES CLICK ================= */
 yesBtn.addEventListener("click", async () => {
   card.classList.add("hidden");
   yesScreen.classList.remove("hidden");
 
-  // If she never started music, YES click is a valid tap to start audio too
   if (!audioEnabled) audioEnabled = true;
 
-  if (audioEnabled) {
-    try {
-      // Fade out A completely, then hard stop it
-      if (!trackA.paused) {
-        await fadeTo(trackA, 0, 900);
-        await stopHard(trackA);
-      } else {
-        await stopHard(trackA);
-      }
-
-      // Start B from beginning + fade in
-      trackB.currentTime = 0;
-      trackB.volume = 0;
-      await trackB.play();
-      await fadeTo(trackB, 1, 900);
-
-    } catch (e) {
-      console.log("Switch failed:", e);
+  try {
+    // Stop A cleanly
+    if (!trackA.paused) {
+      await fadeTo(trackA, 0);
+      await stopHard(trackA);
     }
+
+    // Start B
+    trackB.currentTime = 0;
+    trackB.volume = 0;
+    await trackB.play();
+    await fadeTo(trackB, 1);
+
+  } catch (e) {
+    console.log("Music switch failed:", e);
   }
 });
