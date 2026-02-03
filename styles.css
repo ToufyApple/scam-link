@@ -155,3 +155,9 @@ body{
   margin: 0 auto 10px;
   display: block;
 }
+.final-gif{
+  width: 180px;
+  max-width: 60vw;
+  margin-top: 10px;
+  border-radius: 18px;
+}
