@@ -3,19 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For Naz 🌻</title>
+  <title>For Naz ❤️</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
+  <!-- FRONT PAGE -->
   <main id="card" class="card">
 
-    <!-- 🧸 GIF -->
-    <img
-      src="cute-teddy.gif"
-      alt="Cute teddy bear with rose"
-      class="teddy"
-    />
+    <img src="thank-you.gif" class="top-gif" alt="Cute teddy" />
 
     <h1 class="title">
       Will you be my Valentine, <span class="name">Naz</span>?
@@ -25,24 +21,32 @@
       You are my sunflower, because you brighten my everyday 🌻
     </p>
 
-    <button id="startMusic" class="start-music" type="button">
-      ▶️ Start the vibe
-    </button>
+    <button id="startMusic" class="start-music">▶️ Start the vibe</button>
     <small class="music-note">Tap once to enable music 💜</small>
 
-    <div id="buttonsWrap" class="buttons-wrap">
-      <button id="yes" class="btn yes" type="button">YES</button>
-      <button id="no" class="btn no" type="button">NO</button>
+    <div class="buttons-wrap">
+      <button id="yes" class="btn yes">YES</button>
+      <button id="no" class="btn no">NO</button>
     </div>
 
     <small class="hint">
-      (Hint: You can try and say NO (watch what happens). Butttttt YES unlocks a surprise 🌻)
+      (Hint: You can try and say NO 😏 — but YES unlocks a surprise 💖)
     </small>
 
   </main>
 
-  <canvas id="sunflower"></canvas>
+  <!-- YES SCREEN -->
+  <section id="yesScreen" class="yes-screen hidden">
+    <h1 class="yes-title">Knew you’d say YES! 💕</h1>
 
+    <div class="gif-grid">
+      <img src="tkthao219-bubududu.gif" />
+      <img src="dudu-bubu-love-gif.gif" />
+      <img src="6ae825d666102d7bdd769b2434b3e2b3.gif" />
+    </div>
+  </section>
+
+  <!-- MUSIC -->
   <audio id="trackA" preload="auto" loop>
     <source src="kalamantina.mp3" type="audio/mpeg">
   </audio>
@@ -50,10 +54,6 @@
   <audio id="trackB" preload="auto" loop>
     <source src="yama.mp3" type="audio/mpeg">
   </audio>
-
-  <button id="musicToggle" class="music-toggle hidden" type="button">
-    🔊 Music
-  </button>
 
   <script src="script.js"></script>
 </body>
