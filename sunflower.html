@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌻</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: grid;
+      place-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    }
+
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .replay {
+      position: fixed;
+      bottom: 18px;
+      color: #bbb;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="sunflower"></canvas>
+  <div class="replay">Tap anywhere to replay 🌻</div>
+
+  <script>
+    const canvas = document.getElementById("sunflower");
+    const ctx = canvas.getContext("2d");
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      ctx.strokeStyle = "#ffb300";
+      ctx.lineWidth = 2;
+
+      for (let i = 0; i < 24; i++) {
+        ctx.beginPath();
+        ctx.ellipse(
+          cx,
+          cy,
+          200,
+          80,
+          (Math.PI / 12) * i,
+          0,
+          Math.PI * 2
+        );
+        ctx.stroke();
+      }
+
+      // center
+      ctx.fillStyle = "#8b4513";
+      for (let i = 0; i < 180; i++) {
+        const r = 3 * Math.sqrt(i);
+        const a = i * 137.5 * (Math.PI / 180);
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(a), cy + r * Math.sin(a), 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // name
+      ctx.fillStyle = "black";
+      ctx.font = "bold 48px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Naz", cx, cy);
+    }
+
+    draw();
+    document.body.addEventListener("click", draw);
+  </script>
+</body>
+</html>
