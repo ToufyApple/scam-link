@@ -8,20 +8,37 @@
 </head>
 <body>
 
-<div id="card">
-  <h1>Will you be my Valentine, <span>Naz</span>?</h1>
-  <p>You are my sunflower 🌻</p>
+  <!-- Proposal Card -->
+  <div id="card">
+    <h1>Will you be my Valentine, <span class="name">Naz</span>?</h1>
 
-  <div id="buttons">
-    <button id="yes">YES</button>
-    <button id="no">NO</button>
+    <p class="subtitle">
+      You are my sunflower, because you brighten my everyday 🌻
+    </p>
+
+    <div id="buttons">
+      <button id="yes">YES</button>
+      <button id="no">NO</button>
+    </div>
+
+    <small class="hint">
+      (Hint: You can try and say NO (watch what happens). Butttttt YES unlocks a surprise 🌻)
+    </small>
   </div>
 
-  <small>(Hint: YES unlocks a surprise 🌻)</small>
-</div>
+  <!-- Fullscreen Animation Canvas -->
+  <canvas id="sunflower"></canvas>
 
-<canvas id="sunflower"></canvas>
+  <!-- Background music (starts after YES click) -->
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="kalamantina.mp3" type="audio/mpeg">
+  </audio>
 
-<script src="script.js"></script>
+  <!-- Music toggle (appears on animation screen) -->
+  <button id="musicToggle" class="music-toggle hidden" type="button" aria-label="Toggle music">
+    🔊 Music
+  </button>
+
+  <script src="script.js"></script>
 </body>
 </html>
