@@ -2,94 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌻</title>
-
+  <title>For Naz 🌻</title>
   <style>
     body {
       margin: 0;
       background: black;
-      display: grid;
-      place-items: center;
+      color: #f5c542;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
       overflow: hidden;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      font-family: Arial, sans-serif;
     }
 
     canvas {
-      max-width: 100%;
-      max-height: 100%;
+      display: block;
     }
 
-    .replay {
-      position: fixed;
-      bottom: 18px;
-      color: #bbb;
-      font-size: 14px;
-      opacity: 0.8;
+    .text {
+      margin: 10px;
+      font-size: 1.3rem;
     }
   </style>
 </head>
-
 <body>
-  <canvas id="sunflower"></canvas>
-  <div class="replay">Tap anywhere to replay 🌻</div>
+
+  <div class="text">For Naz</div>
+  <canvas id="flower"></canvas>
+  <div class="text">Always 🌻</div>
 
   <script>
-    const canvas = document.getElementById("sunflower");
+    const canvas = document.getElementById("flower");
     const ctx = canvas.getContext("2d");
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    window.addEventListener("resize", resize);
-    resize();
+    let angle = 0;
+    let radius = 0;
 
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
+      const x = canvas.width / 2 + radius * Math.cos(angle);
+      const y = canvas.height / 2 + radius * Math.sin(angle);
 
-      ctx.strokeStyle = "#ffb300";
-      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#f5c542";
+      ctx.fill();
 
-      for (let i = 0; i < 24; i++) {
-        ctx.beginPath();
-        ctx.ellipse(
-          cx,
-          cy,
-          200,
-          80,
-          (Math.PI / 12) * i,
-          0,
-          Math.PI * 2
-        );
-        ctx.stroke();
-      }
+      angle += 0.3;
+      radius += 0.15;
 
-      // center
-      ctx.fillStyle = "#8b4513";
-      for (let i = 0; i < 180; i++) {
-        const r = 3 * Math.sqrt(i);
-        const a = i * 137.5 * (Math.PI / 180);
-        ctx.beginPath();
-        ctx.arc(cx + r * Math.cos(a), cy + r * Math.sin(a), 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // name
-      ctx.fillStyle = "black";
-      ctx.font = "bold 48px system-ui";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Naz", cx, cy);
+      requestAnimationFrame(draw);
     }
 
     draw();
-    document.body.addEventListener("click", draw);
   </script>
+
 </body>
 </html>
