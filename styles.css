@@ -82,10 +82,14 @@ body{
 
 /* Buttons: always visible */
 .buttons-wrap{
+  position: relative;          
   display:flex;
   justify-content:center;
+  align-items:center;
   gap:14px;
   margin: 10px 0 10px;
+
+  height: 96px;                
 }
 
 .btn{
