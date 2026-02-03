@@ -10,85 +10,119 @@ const trackB = document.getElementById("trackB"); // yama
 let audioEnabled = false;
 let yesSize = 24;
 
-/* AUDIO FADE */
-function fade(audio, from, to, duration = 1200){
-  audio.volume = from;
-  const step = (to - from) / (duration / 50);
-  const i = setInterval(() => {
-    audio.volume = Math.max(0, Math.min(1, audio.volume + step));
-    if ((step > 0 && audio.volume >= to) || (step < 0 && audio.volume <= to)) {
-      clearInterval(i);
+// ---------- Fade helpers (awaitable, no overlap bugs) ----------
+function fadeTo(audio, target, ms = 1200) {
+  const start = audio.volume;
+  const t0 = performance.now();
+
+  return new Promise((resolve) => {
+    function tick(now) {
+      const p = Math.min(1, (now - t0) / ms);
+      audio.volume = start + (target - start) * p;
+      if (p >= 1) return resolve();
+      requestAnimationFrame(tick);
     }
-  }, 50);
+    requestAnimationFrame(tick);
+  });
 }
 
-/* START MUSIC */
-startMusicBtn.addEventListener("click", async () => {
-  audioEnabled = true;
-  trackA.currentTime = 0;
-  trackA.volume = 0;
-  await trackA.play();
-  fade(trackA, 0, 1);
+async function stopHard(audio) {
+  audio.pause();
+  audio.currentTime = 0;
+  audio.volume = 0;
+}
 
-  startMusicBtn.textContent = "🎶 Playing";
-  startMusicBtn.disabled = true;
+// ---------- Start Kalamantina on front page ----------
+startMusicBtn.addEventListener("click", async () => {
+  try {
+    audioEnabled = true;
+
+    await stopHard(trackB);
+
+    trackA.currentTime = 0;
+    trackA.volume = 0;
+    await trackA.play();
+    await fadeTo(trackA, 1, 1200);
+
+    startMusicBtn.textContent = "🎶 Playing";
+    startMusicBtn.disabled = true;
+  } catch (e) {
+    console.log("Audio blocked:", e);
+  }
 });
 
-/* ---- NO BUTTON DODGE (SMALLER MOVEMENT) ----
-   Keep it close to its original spot so it looks playful, not chaotic.
-*/
+// ---------- NO button dodge (stays inside wrapper) ----------
+function makeNoAbsoluteOnce() {
+  if (getComputedStyle(noBtn).position === "absolute") return;
+
+  const wrap = document.querySelector(".buttons-wrap");
+  const wrapRect = wrap.getBoundingClientRect();
+  const noRect = noBtn.getBoundingClientRect();
+
+  noBtn.style.position = "absolute";
+  noBtn.style.left = `${noRect.left - wrapRect.left}px`;
+  noBtn.style.top  = `${noRect.top  - wrapRect.top}px`;
+}
+
 function dodgeNo(){
   const wrap = document.querySelector(".buttons-wrap");
   const wrapRect = wrap.getBoundingClientRect();
 
-  // Get current position relative to wrapper
-  const noRect = noBtn.getBoundingClientRect();
-  const currentX = noRect.left - wrapRect.left;
-  const currentY = noRect.top - wrapRect.top;
-
-  // Convert to absolute inside wrapper ONCE
-  if (getComputedStyle(noBtn).position !== "absolute") {
-    noBtn.style.position = "absolute";
-    noBtn.style.left = `${currentX}px`;
-    noBtn.style.top  = `${currentY}px`;
-  }
-
-  // Move by a small random delta (bounded)
-  const dx = (Math.random() * 140) - 70;  // -70..+70 px
-  const dy = (Math.random() * 80)  - 40;  // -40..+40 px
+  makeNoAbsoluteOnce();
 
   const bw = noBtn.offsetWidth;
   const bh = noBtn.offsetHeight;
 
-  // Clamp inside wrapper with padding
+  // Small playful movement, clamped inside wrapper
+  const dx = (Math.random() * 140) - 70; // -70..+70
+  const dy = (Math.random() * 60)  - 30; // -30..+30
+
   const pad = 6;
-  const newX = Math.min(Math.max(parseFloat(noBtn.style.left) + dx, pad), wrapRect.width - bw - pad);
-  const newY = Math.min(Math.max(parseFloat(noBtn.style.top)  + dy, pad), wrapRect.height - bh - pad);
+  const curX = parseFloat(noBtn.style.left);
+  const curY = parseFloat(noBtn.style.top);
+
+  const newX = Math.min(Math.max(curX + dx, pad), wrapRect.width  - bw - pad);
+  const newY = Math.min(Math.max(curY + dy, pad), wrapRect.height - bh - pad);
 
   noBtn.style.left = `${newX}px`;
   noBtn.style.top  = `${newY}px`;
 
-  // YES grows a bit (but not huge)
   yesSize = Math.min(44, yesSize * 1.08);
   yesBtn.style.fontSize = `${Math.round(yesSize)}px`;
 }
 
 noBtn.addEventListener("mouseenter", dodgeNo);
-noBtn.addEventListener("touchstart", e => {
+noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
   dodgeNo();
-},{ passive:false });
+}, { passive:false });
 
-/* YES CLICK */
+// ---------- YES click: STOP A then START B (no overlap) ----------
 yesBtn.addEventListener("click", async () => {
   card.classList.add("hidden");
   yesScreen.classList.remove("hidden");
 
-  if (audioEnabled){
-    trackB.currentTime = 0;
-    trackB.volume = 0;
-    await trackB.play();
-    fade(trackA, trackA.volume, 0);
-    fade(trackB, 0, 1);
+  // If she never started music, YES click is a valid tap to start audio too
+  if (!audioEnabled) audioEnabled = true;
+
+  if (audioEnabled) {
+    try {
+      // Fade out A completely, then hard stop it
+      if (!trackA.paused) {
+        await fadeTo(trackA, 0, 900);
+        await stopHard(trackA);
+      } else {
+        await stopHard(trackA);
+      }
+
+      // Start B from beginning + fade in
+      trackB.currentTime = 0;
+      trackB.volume = 0;
+      await trackB.play();
+      await fadeTo(trackB, 1, 900);
+
+    } catch (e) {
+      console.log("Switch failed:", e);
+    }
   }
 });
