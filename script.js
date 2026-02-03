@@ -1,8 +1,10 @@
-const yes = document.getElementById("yes");
-const no = document.getElementById("no");
 const card = document.getElementById("card");
 const canvas = document.getElementById("sunflower");
 const ctx = canvas.getContext("2d");
+
+const buttonsWrap = document.getElementById("buttonsWrap");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
 
 const startMusicBtn = document.getElementById("startMusic");
 const musicToggle = document.getElementById("musicToggle");
@@ -10,74 +12,67 @@ const musicToggle = document.getElementById("musicToggle");
 const trackA = document.getElementById("trackA"); // kalamantina
 const trackB = document.getElementById("trackB"); // yama
 
-let yesSize = 24;
 let audioEnabled = false;
 let musicOn = true;
+let yesSize = 24;
 
-// ---- helpers: fade audio ----
-function fadeTo(audioEl, targetVolume, durationMs = 1000) {
-  const startVol = audioEl.volume;
-  const start = performance.now();
-
+// ---------- audio helpers ----------
+function fadeTo(audioEl, target, ms = 1200) {
+  const start = audioEl.volume;
+  const t0 = performance.now();
   return new Promise((resolve) => {
     function tick(now) {
-      const t = Math.min(1, (now - start) / durationMs);
-      audioEl.volume = startVol + (targetVolume - startVol) * t;
-      if (t >= 1) return resolve();
+      const p = Math.min(1, (now - t0) / ms);
+      audioEl.volume = start + (target - start) * p;
+      if (p >= 1) return resolve();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   });
 }
 
-async function playFromStartWithFadeIn(audioEl, fadeMs = 1200, endVol = 1) {
-  audioEl.currentTime = 0;
-  audioEl.volume = 0;
-  await audioEl.play();
-  await fadeTo(audioEl, endVol, fadeMs);
+async function playAFromStartFadeIn() {
+  trackB.pause(); trackB.currentTime = 0; trackB.volume = 0;
+
+  trackA.currentTime = 0;
+  trackA.volume = 0;
+  await trackA.play();
+  await fadeTo(trackA, 1, 1200);
 }
 
-async function crossfade(outEl, inEl, fadeMs = 1200, inEndVol = 1) {
-  // start incoming at 0 volume from beginning
-  inEl.currentTime = 0;
-  inEl.volume = 0;
-  await inEl.play();
+async function crossfadeAToB() {
+  trackB.currentTime = 0;
+  trackB.volume = 0;
+  await trackB.play();
 
-  // fade simultaneously
   await Promise.all([
-    fadeTo(outEl, 0, fadeMs),
-    fadeTo(inEl, inEndVol, fadeMs),
+    fadeTo(trackA, 0, 1200),
+    fadeTo(trackB, 1, 1200),
   ]);
 
-  // stop outgoing to avoid background CPU
-  outEl.pause();
-  outEl.currentTime = 0;
+  trackA.pause();
+  trackA.currentTime = 0;
 }
 
-// ---- Start music on the Valentine page (tap required on iPhone) ----
+// ---------- start music on the first page ----------
 startMusicBtn.addEventListener("click", async () => {
   try {
-    // enable audio
     audioEnabled = true;
     musicOn = true;
-
-    // Make sure B is stopped
-    trackB.pause();
-    trackB.currentTime = 0;
-
-    // Start Kalamantina from beginning with fade in
-    await playFromStartWithFadeIn(trackA, 1200, 1);
-
     musicToggle.classList.remove("hidden");
     musicToggle.textContent = "🔊 Music";
+
+    await playAFromStartFadeIn();
+
     startMusicBtn.textContent = "✅ Music playing";
     startMusicBtn.disabled = true;
   } catch (e) {
+    // If iPhone blocks, user can tap again
     console.log("Audio blocked:", e);
   }
 });
 
-// ---- Music toggle (mutes whichever track is active) ----
+// ---------- toggle music ----------
 musicToggle.addEventListener("click", async () => {
   if (!audioEnabled) return;
 
@@ -88,179 +83,205 @@ musicToggle.addEventListener("click", async () => {
     trackB.pause();
   } else {
     musicToggle.textContent = "🔊 Music";
-    // Resume whichever is currently audible (prefer B if it has volume > 0)
     try {
-      if (trackB.volume > 0.01) await trackB.play();
+      // Resume whichever is currently “active”
+      if (!trackB.paused && trackB.volume > 0.01) await trackB.play();
       else await trackA.play();
     } catch(e) {}
   }
 });
 
-// ---- NO button behaviour ----
-function dodgeNo(){
-  const area = document.getElementById("buttons").getBoundingClientRect();
-  const maxLeft = Math.max(0, area.width - no.offsetWidth);
-  const maxTop  = Math.max(0, area.height - no.offsetHeight);
+// ---------- NO button dodge (keeps alignment initially) ----------
+function makeNoAbsoluteIfNeeded() {
+  if (getComputedStyle(noBtn).position === "absolute") return;
 
-  no.style.left = `${Math.random()*maxLeft}px`;
-  no.style.top  = `${Math.random()*maxTop}px`;
+  // Freeze it where it currently is, then allow us to move it inside the wrapper
+  const wrapRect = buttonsWrap.getBoundingClientRect();
+  const noRect = noBtn.getBoundingClientRect();
 
-  yesSize *= 1.18;
-  yes.style.fontSize = `${Math.round(yesSize)}px`;
+  noBtn.style.position = "absolute";
+  noBtn.style.left = `${noRect.left - wrapRect.left}px`;
+  noBtn.style.top  = `${noRect.top  - wrapRect.top}px`;
 }
 
-no.addEventListener("mouseenter", dodgeNo);
-no.addEventListener("touchstart", (e) => {
+function dodgeNo() {
+  makeNoAbsoluteIfNeeded();
+
+  const wrap = buttonsWrap.getBoundingClientRect();
+  const bw = noBtn.offsetWidth;
+  const bh = noBtn.offsetHeight;
+
+  const pad = 8;
+  const maxX = Math.max(pad, wrap.width - bw - pad);
+  const maxY = Math.max(pad, wrap.height - bh - pad);
+
+  const x = Math.random() * (maxX - pad) + pad;
+  const y = Math.random() * (maxY - pad) + pad;
+
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top  = `${y}px`;
+
+  yesSize *= 1.18;
+  yesBtn.style.fontSize = `${Math.round(yesSize)}px`;
+}
+
+noBtn.addEventListener("mouseenter", dodgeNo);
+noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
   dodgeNo();
-}, { passive:false });
+}, { passive: false });
 
-// ---- YES click: crossfade to yama.mp3 + show animation ----
-yes.addEventListener("click", async () => {
+// ---------- YES click: crossfade + animation ----------
+yesBtn.addEventListener("click", async () => {
   card.style.display = "none";
   canvas.style.display = "block";
 
-  // If she didn't tap Start Music, we still can start audio here because YES is a tap.
+  // If they never tapped Start Music, YES is still a user gesture, so we can start here too
   if (!audioEnabled) {
     audioEnabled = true;
     musicToggle.classList.remove("hidden");
     musicToggle.textContent = "🔊 Music";
-    startMusicBtn.disabled = true;
   }
 
   if (musicOn) {
     try {
-      // If kalamantina is playing, crossfade to yama.
-      // If not playing yet, just fade in yama from start.
       const aPlaying = !trackA.paused && trackA.volume > 0.01;
-
-      if (aPlaying) {
-        await crossfade(trackA, trackB, 1200, 1);
-      } else {
-        trackA.pause(); trackA.currentTime = 0; trackA.volume = 0;
-        await playFromStartWithFadeIn(trackB, 1200, 1);
+      if (aPlaying) await crossfadeAToB();
+      else {
+        // Just start B with fade in
+        trackB.currentTime = 0;
+        trackB.volume = 0;
+        await trackB.play();
+        await fadeTo(trackB, 1, 1200);
       }
-    } catch(e) {
-      console.log("Crossfade/play failed:", e);
+    } catch (e) {
+      console.log("Crossfade failed:", e);
     }
   }
 
-  startSunflower();
+  startSpiralSunflower();
 });
 
-// ---------------- SUNFLOWER (same as before, clean sunflower look) ----------------
-function startSunflower(){
-  resize();
-  window.addEventListener("resize", resize);
-
+// ---------- canvas sizing ----------
+function resizeCanvas() {
   const dpr = window.devicePixelRatio || 1;
-  const W = () => canvas.width / dpr;
-  const H = () => canvas.height / dpr;
-  const cx = () => W()/2;
-  const cy = () => H()/2;
-  const base = () => Math.min(W(), H());
+  canvas.width = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
 
-  const petalCount = 28;
-  const petalLen = () => base() * 0.28;
-  const petalWid = () => base() * 0.12;
-  const petalRing = () => base() * 0.18;
+window.addEventListener("resize", () => {
+  if (canvas.style.display === "block") {
+    resizeCanvas();
+  }
+});
 
-  const diskR = () => base() * 0.17;
-  const seedsTotal = 1100;
-  const seedsPerFrame = 90;
+// ---------- “Other animation previously”: spiral + petal arcs ----------
+function startSpiralSunflower() {
+  resizeCanvas();
 
-  let petalsT = 0;
-  let seeds = 0;
-  let nazAlpha = 0;
-  let finished = false;
+  const W = () => window.innerWidth;
+  const H = () => window.innerHeight;
+  const cx = () => W() / 2;
+  const cy = () => H() / 2;
 
   const golden = 137.508 * Math.PI / 180;
 
-  function bg(){
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.fillStyle="#000";
-    ctx.fillRect(0,0,W(),H());
+  // Speed / look controls
+  const TOTAL_SEEDS = 1800;      // more = richer
+  const SEEDS_PER_FRAME = 120;   // faster
+  const PETAL_RINGS = 10;        // fewer rings = less “mess”
+  const PETAL_SEGMENTS = 22;     // arcs around ring
+  const PETAL_COLOR = "#FFA216";
+  const SEED_COLOR = "#8B4513";
+
+  let seedIndex = 0;
+  let nazAlpha = 0;
+  let finished = false;
+
+  function drawBackground() {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, W(), H());
   }
 
-  function drawPetal(angle, t){
-    const len = petalLen() * t;
-    const wid = petalWid() * (0.7 + 0.3*t);
+  function drawPetalArcs() {
+    // Controlled arcs (not full spokes). Looks like layered petals.
+    ctx.strokeStyle = PETAL_COLOR;
+    ctx.lineCap = "round";
 
+    const base = Math.min(W(), H());
+    const outer = base * 0.42;
+    const ringStep = base * 0.018;
+
+    for (let ring = 0; ring < PETAL_RINGS; ring++) {
+      const r = outer - ring * ringStep;
+      ctx.lineWidth = 3 - ring * 0.12;
+
+      for (let s = 0; s < PETAL_SEGMENTS; s++) {
+        const a = (s / PETAL_SEGMENTS) * Math.PI * 2 + ring * 0.12;
+
+        // shorter arcs to avoid “sunburst”
+        const arcLen = Math.PI / 5.2;
+
+        ctx.beginPath();
+        ctx.arc(cx(), cy(), r, a, a + arcLen);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function drawSeeds(upTo) {
     ctx.save();
     ctx.translate(cx(), cy());
-    ctx.rotate(angle);
 
-    const g = ctx.createLinearGradient(0, -petalRing(), 0, -(petalRing() + len));
-    g.addColorStop(0, "#FFD84D");
-    g.addColorStop(0.6, "#FFA216");
-    g.addColorStop(1, "#FF8C00");
-    ctx.fillStyle = g;
+    for (let k = 0; k < upTo; k++) {
+      const i = k;
+      const r = 4.4 * Math.sqrt(i);   // scale spiral
+      const t = i * golden;
 
-    const tipY = -(petalRing() + len);
-    const baseY = -petalRing();
+      // constrain to centre disk
+      const maxR = Math.min(W(), H()) * 0.16;
+      if (r > maxR) break;
 
-    ctx.beginPath();
-    ctx.moveTo(0, tipY);
-    ctx.bezierCurveTo(wid, baseY, wid, baseY + len*0.4, 0, baseY);
-    ctx.bezierCurveTo(-wid, baseY + len*0.4, -wid, baseY, 0, tipY);
-    ctx.fill();
+      const x = r * Math.cos(t);
+      const y = r * Math.sin(t);
+
+      ctx.beginPath();
+      ctx.fillStyle = SEED_COLOR;
+      ctx.arc(x, y, 3.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.restore();
   }
 
-  function step(){
-    bg();
+  function drawNaz(alpha) {
+    if (alpha <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#000";
+    ctx.font = "900 72px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Naz", cx(), cy());
+    ctx.restore();
+  }
 
-    petalsT = Math.min(1, petalsT + 0.06);
-    for(let i=0;i<petalCount;i++){
-      const local = Math.max(0, petalsT - i/petalCount);
-      drawPetal(i*2*Math.PI/petalCount, local);
-    }
+  function step() {
+    drawBackground();
+    drawPetalArcs();
 
-    if(petalsT > 0.3){
-      ctx.beginPath();
-      ctx.arc(cx(), cy(), diskR(), 0, Math.PI*2);
-      ctx.fillStyle = "#2B1209";
-      ctx.fill();
-    }
+    // seeds build fast
+    seedIndex = Math.min(TOTAL_SEEDS, seedIndex + SEEDS_PER_FRAME);
+    drawSeeds(seedIndex);
 
-    if(petalsT > 0.6){
-      for(let i=0;i<seedsPerFrame;i++){
-        if(seeds >= seedsTotal) break;
+    if (seedIndex >= TOTAL_SEEDS) finished = true;
+    if (finished) nazAlpha = Math.min(1, nazAlpha + 0.05);
 
-        const r = Math.sqrt(seeds/seedsTotal) * diskR() * 0.95;
-        const t = seeds * golden;
+    drawNaz(nazAlpha);
 
-        ctx.beginPath();
-        ctx.arc(cx()+r*Math.cos(t), cy()+r*Math.sin(t), 2.4, 0, Math.PI*2);
-        ctx.fillStyle = "rgb(140,80,40)";
-        ctx.fill();
-
-        seeds++;
-      }
-    }
-
-    if(petalsT >= 1 && seeds >= seedsTotal) finished = true;
-    if(finished) nazAlpha = Math.min(1, nazAlpha + 0.05);
-
-    if(nazAlpha > 0){
-      ctx.globalAlpha = nazAlpha;
-      ctx.fillStyle = "#000";
-      ctx.font = "900 72px system-ui";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Naz", cx(), cy());
-      ctx.globalAlpha = 1;
-    }
-
-    if(!(finished && nazAlpha >= 1)) requestAnimationFrame(step);
+    if (!(finished && nazAlpha >= 1)) requestAnimationFrame(step);
   }
 
   step();
-}
-
-function resize(){
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.floor(innerWidth * dpr);
-  canvas.height = Math.floor(innerHeight * dpr);
 }
