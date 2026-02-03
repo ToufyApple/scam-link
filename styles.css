@@ -1,173 +1,56 @@
-:root{
-  --bg: #F7F0FF;
-  --card: #FFFFFF;
-  --text: #2A1F3D;
-
-  --lilac-dark: #6D3CFF;
-  --lilac-soft: #EEE6FF;
-
-  --sunflower: #FFD84D;
-  --sunflower-dark: #F4C430;
-
-  --no-bg: #F1E9FF;
-  --no-hover: #E7DBFF;
-}
-
-*{ box-sizing: border-box; }
-html, body { height: 100%; }
-
-body{
+body {
   margin: 0;
-  font-family: "Avenir Next", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-.page{
-  min-height: 100%;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-}
-
-.hidden{ display: none; }
-
-.card{
-  width: min(520px, 92vw);
-  background: var(--card);
-  border: 1px solid var(--lilac-soft);
-  border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(42,31,61,0.12);
-  padding: 22px 22px 18px;
-  position: relative;
+  height: 100vh;
+  background: #f7f0ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.accent{
-  height: 6px;
-  width: 100%;
-  background: var(--sunflower);
-  position: absolute;
-  top: 0; left: 0;
-}
-
-.title{
-  margin: 24px 0 10px;
-  text-align: center;
-  color: var(--lilac-dark);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  font-size: clamp(22px, 3.6vw, 30px);
-}
-
-.subtitle{
-  margin: 0;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.35;
-}
-
-.divider{
-  height: 1px;
-  background: var(--lilac-soft);
-  margin: 18px 8px 0;
-}
-
-.button-area{
-  position: relative;
-  height: 150px;
-  margin-top: 14px;
-}
-
-.btn{
-  border: 0;
-  border-radius: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  padding: 14px 26px;
-  font-size: 16px;
-  transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn:active{ transform: scale(0.98); }
-
-.btn-yes{
-  background: var(--sunflower);
-  color: #3A2B00;
-  box-shadow: 0 10px 18px rgba(255,216,77,0.35);
-  position: absolute;
-  left: 120px;
-  top: 40px;
-}
-
-.btn-yes:hover{ background: var(--sunflower-dark); }
-
-.btn-no{
-  background: var(--no-bg);
-  color: var(--text);
-  box-shadow: 0 10px 18px rgba(109,60,255,0.10);
-  position: absolute;
-  left: 300px;
-  top: 40px;
-}
-
-.btn-no:hover{
-  background: var(--no-hover);
-  transform: scale(1.03);
-}
-
-.footer{
-  margin: 14px 0 0;
-  text-align: center;
-  color: #6B5A7A;
-  font-size: 12.5px;
-}
-
-/* Animation screen */
-#animationScreen{
-  padding: 0;
-  background: #000;
-  position: relative;
-}
-
-#sunflowerCanvas{
-  width: 100vw;
-  height: 100vh;
-  display: block;
-}
-
-.overlay{
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  display: grid;
-  place-items: end center;
-  padding: 22px;
-}
-
-.overlay-card{
-  pointer-events: auto;
-  width: min(560px, 92vw);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.16);
+#card {
+  background: white;
+  padding: 30px;
   border-radius: 16px;
-  padding: 16px 16px 14px;
-  backdrop-filter: blur(10px);
-  color: #fff;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 2;
 }
 
-.overlay-title{
-  margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 800;
+h1 span {
+  color: #6d3cff;
 }
 
-.overlay-text{
-  margin: 0 0 12px;
-  line-height: 1.35;
-  font-size: 14px;
+#buttons {
+  position: relative;
+  height: 120px;
+  margin-top: 20px;
 }
 
-.muted{ opacity: 0.85; }
+button {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  position: absolute;
+}
+
+#yes {
+  background: #ffd84d;
+  left: 40px;
+}
+
+#no {
+  background: #eee;
+  left: 160px;
+}
+
+canvas {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: black;
+}
