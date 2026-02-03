@@ -53,4 +53,6 @@ canvas {
   position: fixed;
   inset: 0;
   background: black;
+  width: 100vw;
+  height: 100vh;
 }
