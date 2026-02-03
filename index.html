@@ -2,25 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Important Link</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Modern font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <main class="page">
+    <section class="card">
+      <div class="accent"></div>
 
-  <div class="container">
-    <h2 class="top-text">For Naz</h2>
+      <p class="tiny">For Naz</p>
 
-    <h1 class="question">
-      Will you be my Valentine, <span>Naz</span>?
-    </h1>
+      <h1 class="title">
+        Will you be my Valentine, Naz?
+      </h1>
 
-    <div class="buttons">
-      <button id="yesBtn">YES 💖</button>
-      <button id="noBtn">NO 🙄</button>
-    </div>
+      <p class="subtitle">
+        You're my sunflower, because you brighten everything 💜
+      </p>
 
-    <h2 class="bottom-text">Always</h2>
-  </div>
+      <div class="divider"></div>
+
+      <div class="btnRow" id="btnRow">
+        <button id="yesBtn" class="btn yes" type="button">YES</button>
+        <button id="noBtn" class="btn no" type="button" aria-label="No">NO</button>
+      </div>
+
+      <p class="hint">
+        You can try and say NO. Butttttt there is a surprise for you if you click YES 🌻
+      </p>
+
+      <p class="tiny tinyBottom">Always</p>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
