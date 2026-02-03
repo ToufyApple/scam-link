@@ -8,40 +8,37 @@
 </head>
 <body>
 
-  <div id="card">
-    <h1>Will you be my Valentine, <span class="name">Naz</span>?</h1>
+  <main id="card" class="card">
+    <h1 class="title">Will you be my Valentine, <span class="name">Naz</span>?</h1>
 
     <p class="subtitle">
       You are my sunflower, because you brighten my everyday 🌻
     </p>
 
-    <!-- Start music (required for iPhone). Once tapped, Kalamantina plays. -->
-    <button id="startMusic" class="start-music">▶️ Start the vibe</button>
+    <button id="startMusic" class="start-music" type="button">▶️ Start the vibe</button>
     <small class="music-note">Tap once to enable music 💜</small>
 
-    <div id="buttons">
-      <button id="yes">YES</button>
-      <button id="no">NO</button>
+    <div id="buttonsWrap" class="buttons-wrap">
+      <button id="yes" class="btn yes" type="button">YES</button>
+      <button id="no" class="btn no" type="button">NO</button>
     </div>
 
     <small class="hint">
       (Hint: You can try and say NO (watch what happens). Butttttt YES unlocks a surprise 🌻)
     </small>
-  </div>
+  </main>
 
   <canvas id="sunflower"></canvas>
 
-  <!-- Track A: Kalamantina -->
   <audio id="trackA" preload="auto" loop>
     <source src="kalamantina.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Track B: Yama -->
   <audio id="trackB" preload="auto" loop>
     <source src="yama.mp3" type="audio/mpeg">
   </audio>
 
-  <button id="musicToggle" class="music-toggle hidden">🔊 Music</button>
+  <button id="musicToggle" class="music-toggle hidden" type="button">🔊 Music</button>
 
   <script src="script.js"></script>
 </body>
