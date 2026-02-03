@@ -144,3 +144,10 @@ body{
 }
 
 .hidden{ display:none; }
+/* Front teddy gif */
+.top-gif{
+  width: 120px;
+  max-width: 45vw;
+  margin: 0 auto 10px;
+  display: block;
+}
