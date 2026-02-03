@@ -6,18 +6,19 @@
   --no:#ededed;
 }
 
-*{ box-sizing:border-box; }
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   background:var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 
-  /* Use dynamic viewport height on iPhone (prevents Safari bar issues) */
-  min-height: 100svh;
+  min-height:100svh;
   display:grid;
   place-items:center;
-  padding: 12px;
+  padding:12px;
 }
 
 /* CARD */
@@ -28,91 +29,92 @@ body{
   text-align:center;
   box-shadow:0 24px 60px rgba(0,0,0,.15);
 
-  /* Make sure it never exceeds the screen height */
-  max-height: calc(100svh - 24px);
-  overflow: hidden;
-
-  /* Slightly tighter padding so everything fits */
-  padding: 26px 18px;
+  max-height:calc(100svh - 24px);
+  overflow:hidden;
+  padding:26px 18px;
 }
 
-.title{
-  margin:0 0 8px;
-  font-size:clamp(24px, 5.2vw, 46px);
-  font-weight:900;
-  letter-spacing:-0.02em;
-}
-
-.name{ color:var(--purple); }
-
-.subtitle{
-  margin:0 0 10px;
-  font-size:clamp(14px, 3.5vw, 18px);
-  font-weight:650;
-  line-height: 1.2;
-}
-
-/* Top gif */
+/* FRONT GIF */
 .top-gif{
-  width: 120px;
-  max-width: 45vw;
-  margin: 0 auto 10px;
+  width:120px;
+  max-width:45vw;
+  margin:0 auto 10px;
   display:block;
 }
 
-/* Music button */
+/* TEXT */
+.title{
+  margin:0 0 8px;
+  font-size:clamp(24px,5.2vw,46px);
+  font-weight:900;
+}
+
+.name{
+  color:var(--purple);
+}
+
+.subtitle{
+  margin:0 0 10px;
+  font-size:clamp(14px,3.5vw,18px);
+  font-weight:650;
+  line-height:1.25;
+}
+
+/* MUSIC */
 .start-music{
-  margin: 6px auto 4px;
-  padding: 10px 14px;
+  margin:6px auto 4px;
+  padding:10px 14px;
   border-radius:14px;
   border:1px solid rgba(109,60,255,.22);
   background:rgba(109,60,255,.1);
   font-weight:900;
-  font-size: 16px;
+  font-size:16px;
   cursor:pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .music-note{
   display:block;
   font-size:12px;
   opacity:.6;
-  margin-bottom: 10px;
+  margin-bottom:10px;
 }
 
-/* Buttons: always visible */
+/* BUTTONS */
 .buttons-wrap{
-  position: relative;          
+  position:relative;
   display:flex;
   justify-content:center;
   align-items:center;
   gap:14px;
-  margin: 10px 0 10px;
-
-  height: 96px;                
+  margin:10px 0;
+  height:96px;
 }
 
 .btn{
-  padding: 16px 36px;
+  padding:16px 36px;
   border:none;
   border-radius:18px;
-  font-size: 22px;
-  font-weight: 900;
+  font-size:22px;
+  font-weight:900;
   cursor:pointer;
   user-select:none;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.yes{ background:var(--yes); }
-.no{ background:var(--no); }
+.yes{
+  background:var(--yes);
+}
 
-/* Hint text */
+.no{
+  background:var(--no);
+}
+
+/* HINT */
 .hint{
   display:block;
-  font-size: 13px;
+  font-size:13px;
   opacity:.75;
-  line-height: 1.25;
-  margin-top: 6px;
+  line-height:1.25;
+  margin-top:6px;
 }
 
 /* YES SCREEN */
@@ -125,7 +127,7 @@ body{
   justify-content:center;
   align-items:center;
   gap:14px;
-  padding: 18px;
+  padding:18px;
 }
 
 .yes-title{
@@ -134,30 +136,30 @@ body{
   text-align:center;
 }
 
+/* GIF GRID (TOP 3) */
 .gif-grid{
   display:flex;
-  gap:12px;
+  gap:14px;
   flex-wrap:wrap;
   justify-content:center;
 }
 
 .gif-grid img{
-  width: 130px;
-  max-width: 42vw;
+  width:140px;
+  height:140px;
+  object-fit:contain;
   border-radius:16px;
 }
 
-.hidden{ display:none; }
-/* Front teddy gif */
-.top-gif{
-  width: 120px;
-  max-width: 45vw;
-  margin: 0 auto 10px;
-  display: block;
+/* SUNFLOWER BOTTOM */
+.sunflower-final{
+  margin-top:16px;
+  width:140px;
+  height:140px;
+  object-fit:contain;
 }
-.final-gif{
-  width: 180px;
-  max-width: 60vw;
-  margin-top: 10px;
-  border-radius: 18px;
+
+/* UTIL */
+.hidden{
+  display:none;
 }
