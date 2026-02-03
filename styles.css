@@ -10,84 +10,105 @@
 
 body{
   margin:0;
-  min-height:100vh;
   background:var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+  /* Use dynamic viewport height on iPhone (prevents Safari bar issues) */
+  min-height: 100svh;
   display:grid;
   place-items:center;
-  padding:16px;
+  padding: 12px;
 }
 
 /* CARD */
 .card{
   width:min(860px,92vw);
   background:var(--card);
-  padding:42px 24px;
   border-radius:22px;
   text-align:center;
   box-shadow:0 24px 60px rgba(0,0,0,.15);
-}
 
-.top-gif{
-  width:160px;
-  max-width:60vw;
-  margin:0 auto 14px;
-  display:block;
+  /* Make sure it never exceeds the screen height */
+  max-height: calc(100svh - 24px);
+  overflow: hidden;
+
+  /* Slightly tighter padding so everything fits */
+  padding: 26px 18px;
 }
 
 .title{
-  margin:0 0 12px;
-  font-size:clamp(28px,4.2vw,54px);
+  margin:0 0 8px;
+  font-size:clamp(24px, 5.2vw, 46px);
   font-weight:900;
+  letter-spacing:-0.02em;
 }
 
 .name{ color:var(--purple); }
 
 .subtitle{
-  margin:0 0 14px;
-  font-size:clamp(16px,2vw,22px);
-  font-weight:600;
+  margin:0 0 10px;
+  font-size:clamp(14px, 3.5vw, 18px);
+  font-weight:650;
+  line-height: 1.2;
 }
 
+/* Top gif */
+.top-gif{
+  width: 120px;
+  max-width: 45vw;
+  margin: 0 auto 10px;
+  display:block;
+}
+
+/* Music button */
 .start-music{
-  margin:8px auto;
-  padding:12px 18px;
+  margin: 6px auto 4px;
+  padding: 10px 14px;
   border-radius:14px;
   border:1px solid rgba(109,60,255,.22);
   background:rgba(109,60,255,.1);
   font-weight:900;
+  font-size: 16px;
   cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .music-note{
   display:block;
   font-size:12px;
   opacity:.6;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
+/* Buttons: always visible */
 .buttons-wrap{
   display:flex;
   justify-content:center;
-  gap:18px;
-  margin:14px 0;
+  gap:14px;
+  margin: 10px 0 10px;
 }
 
 .btn{
-  padding:18px 44px;
+  padding: 16px 36px;
   border:none;
   border-radius:18px;
-  font-size:24px;
-  font-weight:900;
+  font-size: 22px;
+  font-weight: 900;
   cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .yes{ background:var(--yes); }
 .no{ background:var(--no); }
 
+/* Hint text */
 .hint{
-  font-size:14px;
+  display:block;
+  font-size: 13px;
   opacity:.75;
+  line-height: 1.25;
+  margin-top: 6px;
 }
 
 /* YES SCREEN */
@@ -99,24 +120,26 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:18px;
+  gap:14px;
+  padding: 18px;
 }
 
 .yes-title{
-  font-size:clamp(32px,5vw,56px);
+  font-size:clamp(26px,6vw,48px);
   font-weight:900;
+  text-align:center;
 }
 
 .gif-grid{
   display:flex;
-  gap:14px;
+  gap:12px;
   flex-wrap:wrap;
   justify-content:center;
 }
 
 .gif-grid img{
-  width:140px;
-  max-width:40vw;
+  width: 130px;
+  max-width: 42vw;
   border-radius:16px;
 }
 
